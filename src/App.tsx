@@ -199,9 +199,9 @@ export default function App() {
 
   if (!isAuthenticated) {
     return (
-      <div className="min-h-screen bg-slate-900 flex items-center justify-center p-4">
+      <div className="min-h-screen bg-[#0f172a] flex items-center justify-center p-4">
         <motion.div 
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           className="bg-white p-8 rounded-2xl shadow-2xl w-full max-w-md space-y-6"
         >
@@ -209,14 +209,14 @@ export default function App() {
             <div className="inline-flex p-3 bg-blue-50 text-blue-600 rounded-xl mb-2">
               <Users size={32} />
             </div>
-            <h1 className="text-2xl font-bold text-slate-800 tracking-tight">Sistema CECM</h1>
-            <p className="text-slate-500 text-sm font-medium">Colégio Estadual Cívico-Militar Gregório Szeremeta</p>
+            <h1 className="text-2xl font-bold text-slate-800 tracking-tight text-center">Sistema CECM</h1>
+            <p className="text-slate-500 text-sm font-medium text-center">Colégio Estadual Cívico-Militar Gregório Szeremeta</p>
           </div>
 
           <form 
             onSubmit={(e) => {
               e.preventDefault();
-              if (password === 'ccm2024') {
+              if (password.toLowerCase().trim() === 'ccm2024') {
                 setIsAuthenticated(true);
               } else {
                 setLoginError(true);
@@ -231,7 +231,7 @@ export default function App() {
                 type="password" 
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                placeholder="Insira a senha do colégio..."
+                placeholder="Senha de acesso..."
                 className={cn(
                   "w-full px-4 py-3 bg-slate-50 border rounded-xl focus:outline-none transition-all",
                   loginError ? "border-red-500 animate-shake" : "border-slate-200 focus:border-blue-500 focus:ring-4 focus:ring-blue-50/50"
@@ -239,7 +239,7 @@ export default function App() {
                 autoFocus
               />
               {loginError && (
-                <p className="text-[10px] text-red-500 font-bold uppercase mt-1">Senha inválida ou incorreta</p>
+                <p className="text-[10px] text-red-500 font-bold uppercase mt-1">Senha incorreta</p>
               )}
             </div>
             <button 
