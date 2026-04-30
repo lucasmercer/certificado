@@ -1,6 +1,6 @@
 {
-  "name": "Gerador de Certificados CCM",
-  "description": "Uma ferramenta para geração e download em massa de certificados de Menção Honrosa para estudantes.",
+  "name": "Sistema - CCM Gregório Szeremeta",
+  "description": "Sistema de gestão e geração de certificados para o Colégio Cívico-Militar Gregório Szeremeta.",
   "requestFramePermissions": [],
   "majorCapabilities": []
 }
