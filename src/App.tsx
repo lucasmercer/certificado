@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { generateCertificate, renderPdfToCanvas, type CertificateData, formatName } from './lib/pdf-utils';
-import { FileText, Download, Eye, Users, Calendar, Type, Loader2 } from 'lucide-react';
+import { FileText, Download, Eye, Users, Calendar, Type, Loader2, ImagePlus } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
@@ -30,6 +30,17 @@ export default function App() {
   const [yOffsetSignatures, setYOffsetSignatures] = useState(0);
   const [xOffsetSignatures, setXOffsetSignatures] = useState(0);
   const [showSystemElements, setShowSystemElements] = useState(true);
+
+  // Logo State
+  const [logoBytes, setLogoBytes] = useState<Uint8Array | null>(null);
+  const [logoX, setLogoX] = useState(0);
+  const [logoY, setLogoY] = useState(0);
+  const [logoScale, setLogoScale] = useState(0.5);
+
+  // Font Selections
+  const [fontName, setFontName] = useState('Helvetica-Bold');
+  const [fontDescription, setFontDescription] = useState('Times-Italic');
+  const [fontFooter, setFontFooter] = useState('Helvetica');
 
   const [isDownloading, setIsDownloading] = useState(false);
   const [isPreviewing, setIsPreviewing] = useState(false);
@@ -75,7 +86,14 @@ export default function App() {
       xOffsetDescription,
       yOffsetSignatures,
       xOffsetSignatures,
-      showSystemElements
+      showSystemElements,
+      fontName,
+      fontDescription,
+      fontFooter,
+      logoBytes,
+      logoX,
+      logoY,
+      logoScale
     };
 
     try {
@@ -139,7 +157,14 @@ export default function App() {
           xOffsetDescription,
           yOffsetSignatures,
           xOffsetSignatures,
-          showSystemElements
+          showSystemElements,
+          fontName,
+          fontDescription,
+          fontFooter,
+          logoBytes,
+          logoX,
+          logoY,
+          logoScale
         };
 
         const pdfBytes = await generateCertificate(studentData);
@@ -376,20 +401,114 @@ export default function App() {
                   </div>
                 </div>
 
-                <div className="pt-2 border-t border-slate-200 flex items-center justify-between">
-                  <span className="text-[10px] font-bold text-slate-400 uppercase">Linhas/Símbolos Auto</span>
-                  <button 
-                    onClick={() => setShowSystemElements(!showSystemElements)}
-                    className={cn(
-                      "w-8 h-4 rounded-full transition-colors relative",
-                      showSystemElements ? "bg-blue-600" : "bg-slate-300"
+                {/* Logo Ajutes */}
+                <div className="pt-2 border-t border-slate-200 space-y-3">
+                  <div className="flex items-center justify-between">
+                    <span className="text-[9px] font-bold text-blue-600 uppercase tracking-tighter">Logomarca (PNG)</span>
+                    {logoBytes && (
+                      <button onClick={() => setLogoBytes(null)} className="text-[9px] text-red-500 font-bold uppercase">Remover</button>
                     )}
-                  >
-                    <div className={cn(
-                      "absolute top-0.5 w-3 h-3 bg-white rounded-full transition-all",
-                      showSystemElements ? "left-4.5" : "left-0.5"
-                    )} />
-                  </button>
+                  </div>
+                  
+                  {!logoBytes ? (
+                    <label className="flex flex-col items-center justify-center py-4 border-2 border-dashed border-slate-200 rounded-lg cursor-pointer hover:bg-slate-100 transition-colors">
+                      <ImagePlus size={16} className="text-slate-400 mb-1" />
+                      <span className="text-[9px] text-slate-400 font-bold uppercase">Subir PNG</span>
+                      <input 
+                        type="file" accept="image/png" className="hidden" 
+                        onChange={(e) => {
+                          const file = e.target.files?.[0];
+                          if (file) {
+                            const reader = new FileReader();
+                            reader.onload = (ev) => {
+                              const bytes = new Uint8Array(ev.target?.result as ArrayBuffer);
+                              setLogoBytes(bytes);
+                            };
+                            reader.readAsArrayBuffer(file);
+                          }
+                        }}
+                      />
+                    </label>
+                  ) : (
+                    <div className="space-y-2">
+                      <div className="grid grid-cols-3 gap-2">
+                        <div>
+                          <label className="text-[8px] font-bold text-slate-400 uppercase block mb-1">Vert.</label>
+                          <input 
+                            type="range" min="-400" max="400" value={logoY} 
+                            onChange={(e) => setLogoY(parseInt(e.target.value))}
+                            className="w-full h-1 bg-slate-200 rounded-lg accent-blue-600"
+                          />
+                        </div>
+                        <div>
+                          <label className="text-[8px] font-bold text-slate-400 uppercase block mb-1">Horiz.</label>
+                          <input 
+                            type="range" min="-400" max="400" value={logoX} 
+                            onChange={(e) => setLogoX(parseInt(e.target.value))}
+                            className="w-full h-1 bg-slate-200 rounded-lg accent-blue-600"
+                          />
+                        </div>
+                        <div>
+                          <label className="text-[8px] font-bold text-slate-400 uppercase block mb-1">Tam.</label>
+                          <input 
+                            type="range" min="0.1" max="2" step="0.05" value={logoScale} 
+                            onChange={(e) => setLogoScale(parseFloat(e.target.value))}
+                            className="w-full h-1 bg-slate-200 rounded-lg accent-blue-600"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                {/* Font Selections */}
+                <div className="pt-2 border-t border-slate-100 space-y-3">
+                  <span className="text-[9px] font-bold text-slate-400 uppercase tracking-tighter block">Estilo das Fontes</span>
+                  
+                  <div className="space-y-3">
+                    <div className="flex items-center justify-between gap-3">
+                      <label className="text-[10px] font-bold text-slate-500 uppercase shrink-0">Nome</label>
+                      <select 
+                        value={fontName} 
+                        onChange={(e) => setFontName(e.target.value)}
+                        className="bg-white border border-slate-200 text-[10px] rounded px-1.5 py-1 w-full focus:outline-none focus:border-blue-300"
+                      >
+                        <option value="Helvetica">Helvetica (Sans)</option>
+                        <option value="Helvetica-Bold">Helvetica Bold</option>
+                        <option value="Times-Roman">Times (Serif)</option>
+                        <option value="Times-Bold">Times Bold</option>
+                        <option value="Courier">Courier (Mono)</option>
+                      </select>
+                    </div>
+
+                    <div className="flex items-center justify-between gap-3">
+                      <label className="text-[10px] font-bold text-slate-500 uppercase shrink-0">Desc.</label>
+                      <select 
+                        value={fontDescription} 
+                        onChange={(e) => setFontDescription(e.target.value)}
+                        className="bg-white border border-slate-200 text-[10px] rounded px-1.5 py-1 w-full focus:outline-none focus:border-blue-300"
+                      >
+                        <option value="Times-Italic">Times Italic</option>
+                        <option value="Times-Roman">Times (Serif)</option>
+                        <option value="Helvetica">Helvetica (Sans)</option>
+                        <option value="Courier">Courier (Mono)</option>
+                      </select>
+                    </div>
+
+                    <div className="flex items-center justify-between gap-3">
+                      <label className="text-[10px] font-bold text-slate-500 uppercase shrink-0">Rodapé</label>
+                      <select 
+                        value={fontFooter} 
+                        onChange={(e) => setFontFooter(e.target.value)}
+                        className="bg-white border border-slate-200 text-[10px] rounded px-1.5 py-1 w-full focus:outline-none focus:border-blue-300"
+                      >
+                        <option value="Helvetica">Helvetica (Sans)</option>
+                        <option value="Helvetica-Bold">Helvetica Bold</option>
+                        <option value="Times-Roman">Times (Serif)</option>
+                        <option value="Courier">Courier (Mono)</option>
+                      </select>
+                    </div>
+                  </div>
                 </div>
               </div>
             </section>
@@ -481,7 +600,7 @@ export default function App() {
                 Estado: {isDownloading ? "Gerando Lote..." : isPreviewing || isRenderingCanvas ? "Renderizando..." : "Sincronizado"}
               </span>
               <span className="hidden sm:block h-3 w-px bg-slate-200"></span>
-              <span className="hidden sm:block text-slate-300">Ponta Grossa - PR // CCM Gregório Szeremeta</span>
+              <span className="hidden sm:block text-slate-300">Reserva - PR // CCM Gregório Szeremeta</span>
             </div>
             <div className="flex items-center gap-2">
               <Users size={12} className="opacity-50" />
