@@ -31,6 +31,11 @@ export default function App() {
   const [xOffsetSignatures, setXOffsetSignatures] = useState(0);
   const [showSystemElements, setShowSystemElements] = useState(true);
 
+  // Authentication State
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [password, setPassword] = useState('');
+  const [loginError, setLoginError] = useState(false);
+
   // Logo State
   const [logoBytes, setLogoBytes] = useState<Uint8Array | null>(null);
   const [logoX, setLogoX] = useState(0);
@@ -191,6 +196,67 @@ export default function App() {
   };
 
   const studentCount = names.split(',').filter(n => n.trim()).length;
+
+  if (!isAuthenticated) {
+    return (
+      <div className="min-h-screen bg-slate-900 flex items-center justify-center p-4">
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="bg-white p-8 rounded-2xl shadow-2xl w-full max-w-md space-y-6"
+        >
+          <div className="text-center space-y-2">
+            <div className="inline-flex p-3 bg-blue-50 text-blue-600 rounded-xl mb-2">
+              <Users size={32} />
+            </div>
+            <h1 className="text-2xl font-bold text-slate-800 tracking-tight">Sistema CCM</h1>
+            <p className="text-slate-500 text-sm font-medium">Colégio Cívico-Militar Gregório Szeremeta</p>
+          </div>
+
+          <form 
+            onSubmit={(e) => {
+              e.preventDefault();
+              if (password === 'ccm2024') {
+                setIsAuthenticated(true);
+              } else {
+                setLoginError(true);
+                setTimeout(() => setLoginError(false), 2000);
+              }
+            }}
+            className="space-y-4"
+          >
+            <div className="space-y-1">
+              <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Código de Acesso</label>
+              <input 
+                type="password" 
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="Insira a senha do colégio..."
+                className={cn(
+                  "w-full px-4 py-3 bg-slate-50 border rounded-xl focus:outline-none transition-all",
+                  loginError ? "border-red-500 animate-shake" : "border-slate-200 focus:border-blue-500 focus:ring-4 focus:ring-blue-50/50"
+                )}
+                autoFocus
+              />
+              {loginError && (
+                <p className="text-[10px] text-red-500 font-bold uppercase mt-1">Senha inválida ou incorreta</p>
+              )}
+            </div>
+            <button 
+              type="submit"
+              className="w-full bg-slate-900 text-white font-bold py-3 rounded-xl hover:bg-slate-800 transition-colors shadow-lg shadow-slate-200"
+            >
+              ACESSAR SISTEMA
+            </button>
+          </form>
+
+          <p className="text-center text-[10px] text-slate-400 uppercase tracking-tighter">
+            Reserva - PR // Brasil
+          </p>
+        </motion.div>
+      </div>
+    );
+  }
 
   return (
     <div className="flex flex-col h-screen w-full bg-[#F8FAFC] text-slate-800 font-sans overflow-hidden">
