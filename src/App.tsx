@@ -299,6 +299,34 @@ export default function App() {
         {/* Sidebar Controls */}
         <aside className="w-80 border-r border-slate-200 bg-white p-6 flex flex-col gap-6 overflow-y-auto shrink-0 shadow-[4px_0_24px_rgba(0,0,0,0.02)]">
           <div className="space-y-6">
+            <section className="bg-blue-50/50 p-4 rounded-2xl border border-blue-100/50">
+              <label className="text-[10px] font-bold text-blue-600 uppercase tracking-widest block mb-3">
+                Modelos Base (Download)
+              </label>
+              <div className="grid grid-cols-1 gap-2">
+                {[
+                  { name: 'Modelo Padrão', url: 'https://lucasmercer.github.io/certificado/template.pdf' },
+                  { name: 'Modelo Premium', url: 'https://lucasmercer.github.io/certificado/template4.pdf' },
+                  { name: 'Modelo Alternativo', url: 'https://lucasmercer.github.io/certificado/template2.pdf' },
+                  { name: 'Template Especial 6', url: 'https://lucasmercer.github.io/certificado/template6%20(1).pdf' },
+                  { name: 'Template Especial 7', url: 'https://lucasmercer.github.io/certificado/template7%20(1).pdf' },
+                ].map((m, idx) => (
+                  <a
+                    key={idx}
+                    href={m.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-3 p-2 bg-white border border-blue-100 rounded-xl hover:bg-blue-100 hover:border-blue-200 transition-all group"
+                  >
+                    <div className="w-7 h-7 bg-blue-50 rounded-lg flex items-center justify-center text-blue-600 group-hover:bg-white transition-colors">
+                      <FileText size={14} />
+                    </div>
+                    <span className="text-[10px] font-bold text-slate-600 uppercase tracking-tight">{m.name}</span>
+                  </a>
+                ))}
+              </div>
+            </section>
+
             <section>
               <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest block mb-2">
                 Lista de Alunos
