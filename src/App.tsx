@@ -250,9 +250,14 @@ export default function App() {
             </button>
           </form>
 
-          <p className="text-center text-[10px] text-slate-400 uppercase tracking-tighter">
-            Reserva - PR // Brasil
-          </p>
+          <div className="text-center space-y-1">
+            <p className="text-[10px] text-slate-400 uppercase tracking-tighter">
+              Reserva - PR // Brasil
+            </p>
+            <p className="text-[9px] text-slate-300 uppercase font-medium">
+              Criado por Prof. Lucas Mercer Leniar
+            </p>
+          </div>
         </motion.div>
       </div>
     );
