@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { generateCertificate, renderPdfToCanvas, type CertificateData, formatName } from './lib/pdf-utils';
-import { FileText, Download, Eye, Users, Calendar, Type, Loader2, ImagePlus } from 'lucide-react';
+import { FileText, Download, Eye, Users, Calendar, Type, Loader2, ImagePlus, LogOut } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
@@ -53,6 +53,38 @@ export default function App() {
   const [previewPdfBytes, setPreviewPdfBytes] = useState<Uint8Array | null>(null);
   
   const canvasRef = useRef<HTMLCanvasElement>(null);
+
+  // Limpar cache e invalidar arquivos antigos ao carregar a tela de login
+  useEffect(() => {
+    if (!isAuthenticated) {
+      try {
+        // Limpa dados de sessão e local para evitar estados corrompidos
+        localStorage.clear();
+        sessionStorage.clear();
+        
+        // Remove Service Workers (causa principal de tela branca após novos deploys)
+        if (typeof window !== 'undefined' && 'serviceWorker' in navigator) {
+          navigator.serviceWorker.getRegistrations().then((registrations) => {
+            for (const registration of registrations) {
+              registration.unregister();
+              console.log('Service Worker desativado para garantir carregamento limpo.');
+            }
+          });
+        }
+        
+        // Limpa a Cache API do navegador
+        if (typeof window !== 'undefined' && 'caches' in window) {
+          caches.keys().then((names) => {
+            for (const name of names) {
+              caches.delete(name);
+            }
+          });
+        }
+      } catch (e) {
+        console.error("Erro ao limpar cache:", e);
+      }
+    }
+  }, [isAuthenticated]);
 
   const handleTemplateUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -292,6 +324,15 @@ export default function App() {
               {isDownloading ? "Processando Lote" : isPreviewing || isRenderingCanvas ? "Pintando Canvas" : "Sistema Pronto"}
             </span>
           </div>
+          <div className="h-8 w-px bg-slate-200"></div>
+          <button 
+            onClick={() => setIsAuthenticated(false)}
+            className="flex items-center gap-2 px-3 py-2 bg-slate-50 hover:bg-red-50 text-slate-600 hover:text-red-600 rounded-lg transition-all border border-slate-200 hover:border-red-100 group"
+            title="Sair do Sistema"
+          >
+            <LogOut size={16} className="group-hover:translate-x-0.5 transition-transform" />
+            <span className="text-[10px] font-bold uppercase tracking-tight">Sair</span>
+          </button>
         </div>
       </header>
 
