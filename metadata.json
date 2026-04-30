@@ -1,0 +1,6 @@
+{
+  "name": "Gerador de Certificados CCM",
+  "description": "Uma ferramenta para geração e download em massa de certificados de Menção Honrosa para estudantes.",
+  "requestFramePermissions": [],
+  "majorCapabilities": []
+}
