@@ -79,38 +79,84 @@ export const generateCertificate = async (data: CertificateData): Promise<Uint8A
     return (fonts as any)[key || ''] || fonts[fallback];
   };
 
-  const ccmNavy = rgb(15/255, 32/255, 54/255);
-  const ccmGreen = rgb(76/255, 116/255, 33/255);
-  const ccmGold = rgb(212/255, 175/255, 55/255);
+  const ccmNavy = rgb(12/255, 33/255, 52/255);
+  const ccmGreen = rgb(34/255, 68/255, 45/255);
+  const ccmGold = rgb(194/255, 161/255, 87/255);
+  const ccmLightGreen = rgb(118/255, 168/255, 29/255);
 
-  // 1. Draw Background/Decorations ONLY if NOT custom or if explicitly asked
+  // 1. Draw Background/Decorations ONLY if NOT custom
   if (!isCustom) {
     const template = data.template || 'template1';
+    
     if (template === 'template1') {
-      page.drawEllipse({ x: -10, y: height / 2, xScale: 150, yScale: 350, color: ccmNavy, opacity: 0.9 });
-      page.drawEllipse({ x: -40, y: height / 2, xScale: 130, yScale: 320, color: ccmGreen, opacity: 0.7 });
-      page.drawEllipse({ x: -70, y: height / 2, xScale: 110, yScale: 290, color: rgb(0.95, 0.95, 0.95), opacity: 1 });
-      const title = 'Certificado de Menção Honrosa';
-      const titleFont = fonts['Times-Roman'];
-      page.drawText(title, { x: width / 2 - titleFont.widthOfTextAtSize(title, 34) / 2 + 50, y: height - 120, size: 34, font: titleFont });
-    } else if (template === 'template4') {
-      page.drawRectangle({ x: 0, y: 0, width, height, color: ccmNavy });
-      page.drawRectangle({ x: 20, y: 20, width: width - 40, height: height - 40, borderColor: ccmGold, borderWidth: 4 });
-      const title = 'CERTIFICADO DE MENÇÃO HONROSA';
-      const titleFont = fonts['Helvetica-Bold'];
-      page.drawText(title, { x: width / 2 - titleFont.widthOfTextAtSize(title, 28) / 2, y: height - 120, size: 28, font: titleFont, color: ccmGold });
-    } else {
-      page.drawRectangle({ x: 30, y: 30, width: width - 60, height: height - 60, borderColor: ccmNavy, borderWidth: 1.5 });
+      // Green/Gold Wave layout (Top Left)
+      page.drawEllipse({ x: 0, y: height, xScale: 500, yScale: 200, color: ccmGreen, rotate: { type: 'degrees', angle: -20 } });
+      page.drawEllipse({ x: 40, y: height + 20, xScale: 480, yScale: 180, color: ccmGold, rotate: { type: 'degrees', angle: -20 } });
+      
+      // Gold Seal (Top Left cornerish)
+      page.drawCircle({ x: 120, y: height - 120, size: 60, color: ccmGold });
+      page.drawCircle({ x: 120, y: height - 120, size: 50, color: rgb(250/255, 217/255, 105/255) });
+      
       const title = 'CERTIFICADO';
       const titleFont = fonts['Helvetica-Bold'];
-      page.drawText(title, { x: width / 2 - titleFont.widthOfTextAtSize(title, 48) / 2, y: height - 130, size: 48, font: titleFont, color: ccmNavy });
+      page.drawText(title, { x: width / 2 - titleFont.widthOfTextAtSize(title, 55) / 2 + 30, y: height - 140, size: 55, font: titleFont, color: ccmNavy });
+      
+      // Bottom Border
+      page.drawRectangle({ x: 30, y: 30, width: width - 60, height: 10, color: ccmGold });
+
+    } else if (template === 'template2') {
+      // Blue/Gold Menção Honrosa
+      page.drawEllipse({ x: width, y: height, xScale: 400, yScale: 600, color: ccmNavy, rotate: { type: 'degrees', angle: 45 } });
+      page.drawEllipse({ x: width - 20, y: height - 20, xScale: 380, yScale: 580, color: ccmGold, rotate: { type: 'degrees', angle: 45 } });
+      
+      const title = 'CERTIFICADO DE';
+      const subtitle = 'MENÇÃO HONROSA';
+      const titleFont = fonts['Times-Roman'];
+      page.drawText(title, { x: 120, y: height - 110, size: 38, font: titleFont, color: ccmNavy });
+      page.drawText(subtitle, { x: 100, y: height - 160, size: 42, font: titleFont, color: ccmNavy });
+
+    } else if (template === 'template3') {
+      // Reconhecimento Layout
+      page.drawRectangle({ x: 0, y: height - 100, width: 200, height: 200, color: ccmNavy, rotate: { type: 'degrees', angle: 30 } });
+      page.drawRectangle({ x: width - 150, y: 0, width: 250, height: 250, color: ccmNavy, rotate: { type: 'degrees', angle: 30 } });
+      page.drawRectangle({ x: width - 180, y: -20, width: 250, height: 250, color: ccmLightGreen, rotate: { type: 'degrees', angle: 30 } });
+
+      const title = 'CERTIFICADO';
+      const titleFont = fonts['Helvetica-Bold'];
+      page.drawText(title, { x: width / 2 - titleFont.widthOfTextAtSize(title, 45) / 2, y: height - 110, size: 45, font: titleFont, color: ccmNavy });
+      
+      // Ribbon bar
+      page.drawRectangle({ x: width / 2 - 150, y: height - 160, width: 300, height: 35, color: ccmLightGreen });
+      const ribbonText = 'RECONHECIMENTO';
+      page.drawText(ribbonText, { x: width / 2 - fonts['Helvetica-Bold'].widthOfTextAtSize(ribbonText, 16) / 2, y: height - 148, size: 16, font: fonts['Helvetica-Bold'], color: ccmNavy });
+
+    } else if (template === 'template4') {
+      // Paraná State Style
+      const title = 'Certificado de';
+      const subtitle = 'Menção Honrosa';
+      const titleFont = fonts['Times-Roman'];
+      page.drawText(title, { x: width / 2 - titleFont.widthOfTextAtSize(title, 36) / 2, y: height - 100, size: 36, font: titleFont, color: rgb(0.1, 0.1, 0.1) });
+      page.drawText(subtitle, { x: width / 2 - titleFont.widthOfTextAtSize(subtitle, 42) / 2, y: height - 150, size: 42, font: titleFont, color: rgb(0.1, 0.1, 0.1) });
+      
+      // Quotes section
+      const quote = 'Sucesso é o acúmulo de pequenos esforços repetidos dia a dia.';
+      page.drawText(quote, { x: width - 350, y: 180, size: 14, font: fonts['Times-Italic'], color: rgb(0.2, 0.2, 0.2) });
+
+    } else if (template === 'template5') {
+      // Wave Right
+      page.drawEllipse({ x: width, y: 0, xScale: 600, yScale: 900, color: ccmNavy, rotate: { type: 'degrees', angle: 10 } });
+      page.drawEllipse({ x: width + 50, y: 0, xScale: 600, yScale: 900, color: ccmGreen, rotate: { type: 'degrees', angle: 15 } });
+
+      const title = 'CERTIFICADO';
+      const titleFont = fonts['Helvetica-Bold'];
+      page.drawText(title, { x: width / 2 - titleFont.widthOfTextAtSize(title, 55) / 2, y: height - 130, size: 55, font: titleFont, color: ccmNavy, characterSpacing: 8 });
     }
   }
 
   // 2. Content (Description)
   const descriptionLines = data.additionalText.split('\n');
   const selectedFontDesc = getFont(data.fontDescription, 'Times-Italic');
-  let currentY = height - 240 + (data.yOffsetDescription || 0);
+  let currentY = height - 260 + (data.yOffsetDescription || 0);
   for (const line of descriptionLines) {
     const cleanLine = line.trim();
     if (!cleanLine) continue;
@@ -121,7 +167,7 @@ export const generateCertificate = async (data: CertificateData): Promise<Uint8A
       y: currentY,
       size: descFontSize,
       font: selectedFontDesc,
-      color: (isCustom || data.template === 'template4') && !isCustom ? rgb(0.9, 0.9, 0.9) : rgb(0.2, 0.2, 0.2),
+      color: rgb(0.15, 0.15, 0.15),
     });
     currentY -= 26;
   }
@@ -142,7 +188,7 @@ export const generateCertificate = async (data: CertificateData): Promise<Uint8A
     y: height / 2 - 40 + (data.yOffsetName || 0),
     size: nameFontSize,
     font: selectedFontName,
-    color: data.template === 'template4' ? ccmGold : rgb(0, 0, 0),
+    color: rgb(0, 0, 0),
   });
 
   // 4. Logo (If provided)
@@ -165,18 +211,45 @@ export const generateCertificate = async (data: CertificateData): Promise<Uint8A
   if (showElements) {
     const sigY = 110 + (data.yOffsetSignatures || 0);
     const sigXOffset = data.xOffsetSignatures || 0;
-    const sigColor = data.template === 'template4' ? rgb(0.7, 0.7, 0.7) : rgb(0.4, 0.4, 0.4);
+    const sigColor = rgb(0.2, 0.2, 0.2);
     const selectedFontFooter = getFont(data.fontFooter, 'Helvetica');
+    const template = data.template || 'template1';
 
+    // Signature labels based on specific model design
+    let leftSig = 'Direção';
+    let rightSig = 'Direção Aux.';
+    
+    if (template === 'template2' || template === 'template4') {
+      leftSig = 'Direção Geral';
+      rightSig = 'Direção Auxiliar';
+    } else if (template === 'template3' || template === 'template5') {
+      leftSig = 'Direção';
+      rightSig = 'Direção Auxiliar';
+    }
+
+    // Left Signature
     page.drawLine({ start: { x: 100 + sigXOffset, y: sigY }, end: { x: 300 + sigXOffset, y: sigY }, thickness: 0.5, color: sigColor });
-    page.drawText('Direção-Geral', { x: (200 + sigXOffset) - selectedFontFooter.widthOfTextAtSize('Direção-Geral', 10) / 2, y: sigY - 15, size: 10, font: selectedFontFooter, color: sigColor });
+    page.drawText(leftSig, { x: (200 + sigXOffset) - selectedFontFooter.widthOfTextAtSize(leftSig, 10) / 2, y: sigY - 15, size: 10, font: selectedFontFooter, color: sigColor });
 
+    // Right Signature
     page.drawLine({ start: { x: width - 300 + sigXOffset, y: sigY }, end: { x: width - 100 + sigXOffset, y: sigY }, thickness: 0.5, color: sigColor });
-    page.drawText('Direção Auxiliar', { x: (width - 200 + sigXOffset) - selectedFontFooter.widthOfTextAtSize('Direção Auxiliar', 10) / 2, y: sigY - 15, size: 10, font: selectedFontFooter, color: sigColor });
+    page.drawText(rightSig, { x: (width - 200 + sigXOffset) - selectedFontFooter.widthOfTextAtSize(rightSig, 10) / 2, y: sigY - 15, size: 10, font: selectedFontFooter, color: sigColor });
 
+    // Middle Date Field
     const [year, month, day] = data.date.split('-');
-    const dateStr = `Reserva, ${day}/${month}/${year}`;
-    page.drawText(dateStr, { x: (width / 2 - selectedFontFooter.widthOfTextAtSize(dateStr, 11) / 2) + sigXOffset, y: 60 + (data.yOffsetSignatures || 0), size: 11, font: selectedFontFooter, color: sigColor });
+    const dateStr = `Reserva - PR, ${day}/${month}/${year}`;
+    
+    // Label
+    page.drawText('DATA', { x: (width / 2 - selectedFontFooter.widthOfTextAtSize('DATA', 8) / 2) + sigXOffset, y: sigY - 15, size: 8, font: selectedFontFooter, color: sigColor });
+    
+    // Date Value
+    page.drawText(dateStr, { 
+      x: (width / 2 - selectedFontFooter.widthOfTextAtSize(dateStr, 12) / 2) + sigXOffset, 
+      y: 60 + (data.yOffsetSignatures || 0), 
+      size: 12, 
+      font: selectedFontFooter, 
+      color: rgb(0,0,0) 
+    });
   }
 
   return await pdfDoc.save();

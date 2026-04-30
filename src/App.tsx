@@ -54,35 +54,10 @@ export default function App() {
   
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
-  // Limpar cache e invalidar arquivos antigos ao carregar a tela de login
+  // Limpar cache ao carregar a tela de login
   useEffect(() => {
     if (!isAuthenticated) {
-      try {
-        // Limpa dados de sessão e local para evitar estados corrompidos
-        localStorage.clear();
-        sessionStorage.clear();
-        
-        // Remove Service Workers (causa principal de tela branca após novos deploys)
-        if (typeof window !== 'undefined' && 'serviceWorker' in navigator) {
-          navigator.serviceWorker.getRegistrations().then((registrations) => {
-            for (const registration of registrations) {
-              registration.unregister();
-              console.log('Service Worker desativado para garantir carregamento limpo.');
-            }
-          });
-        }
-        
-        // Limpa a Cache API do navegador
-        if (typeof window !== 'undefined' && 'caches' in window) {
-          caches.keys().then((names) => {
-            for (const name of names) {
-              caches.delete(name);
-            }
-          });
-        }
-      } catch (e) {
-        console.error("Erro ao limpar cache:", e);
-      }
+      console.log("Sistema pronto para login");
     }
   }, [isAuthenticated]);
 
@@ -428,9 +403,11 @@ export default function App() {
 
               <div className="grid grid-cols-1 gap-1.5">
                 {[
-                  { id: 'template1', label: '1. Modelo Onda Verde' },
-                  { id: 'template4', label: '2. Premium Gold/Azul' },
-                  { id: 'template-std', label: '3. Institucional Padrão' },
+                  { id: 'template1', label: '1. Modelo Onda Verde/Ouro' },
+                  { id: 'template2', label: '2. Menção Honrosa Azul' },
+                  { id: 'template3', label: '3. Reconhecimento Militar' },
+                  { id: 'template4', label: '4. Menção Honrosa Paraná' },
+                  { id: 'template5', label: '5. Tradicional CCM' },
                   ...(templatePdfBytes ? [{ id: 'custom', label: '✨ PDF PERSONALIZADO' }] : []),
                 ].map((t) => (
                   <button
