@@ -209,8 +209,8 @@ export default function App() {
             <div className="inline-flex p-3 bg-blue-50 text-blue-600 rounded-xl mb-2">
               <Users size={32} />
             </div>
-            <h1 className="text-2xl font-bold text-slate-800 tracking-tight">Sistema CCM</h1>
-            <p className="text-slate-500 text-sm font-medium">Colégio Cívico-Militar Gregório Szeremeta</p>
+            <h1 className="text-2xl font-bold text-slate-800 tracking-tight">Sistema CECM</h1>
+            <p className="text-slate-500 text-sm font-medium">Colégio Estadual Cívico-Militar Gregório Szeremeta</p>
           </div>
 
           <form 
@@ -276,7 +276,7 @@ export default function App() {
               GERADOR DE CERTIFICADOS
             </h1>
             <p className="text-[10px] font-medium text-slate-500 uppercase tracking-widest mt-1">
-              CCM Gregório Szeremeta
+              CECM Gregório Szeremeta
             </p>
           </div>
         </div>
@@ -699,7 +699,7 @@ export default function App() {
                 Estado: {isDownloading ? "Gerando Lote..." : isPreviewing || isRenderingCanvas ? "Renderizando..." : "Sincronizado"}
               </span>
               <span className="hidden sm:block h-3 w-px bg-slate-200"></span>
-              <span className="hidden sm:block text-slate-300">Reserva - PR // CCM Gregório Szeremeta</span>
+              <span className="hidden sm:block text-slate-300">Reserva - PR // CECM Gregório Szeremeta</span>
             </div>
             <div className="flex items-center gap-2">
               <Users size={12} className="opacity-50" />
