@@ -54,10 +54,31 @@ export default function App() {
   
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
-  // Limpar cache ao carregar a tela de login
+  // Limpar cache e invalidar arquivos antigos ao carregar a tela de login
   useEffect(() => {
     if (!isAuthenticated) {
-      console.log("Sistema pronto para login");
+      try {
+        console.log("Limpando cache para garantir versão mais recente...");
+        // Limpa dados de sessão para evitar estados zumbis
+        localStorage.clear();
+        sessionStorage.clear();
+        
+        // Remove Service Workers antigos (causa comum de tela branca)
+        if ('serviceWorker' in navigator) {
+          navigator.serviceWorker.getRegistrations().then(registrations => {
+            for (const reg of registrations) reg.unregister();
+          });
+        }
+
+        // Limpa a Cache API
+        if ('caches' in window) {
+          caches.keys().then(names => {
+            for (const name of names) caches.delete(name);
+          });
+        }
+      } catch (e) {
+        console.error("Falha ao limpar cache:", e);
+      }
     }
   }, [isAuthenticated]);
 
